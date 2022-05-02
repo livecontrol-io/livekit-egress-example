@@ -32,6 +32,11 @@ npm run dev
 docker-compose up
 ```
 
+# With mobile
+
+Open /livekit-frontend/`.env`
+
+Change `LC_EXT_IP` to your network external ip.
 
 ## Usage
 
