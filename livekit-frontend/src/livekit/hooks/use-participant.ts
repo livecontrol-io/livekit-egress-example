@@ -12,6 +12,7 @@ export const useParticipant = (participant: Participant) => {
     []
   );
   const handlePublicationsChanged = useCallback(() => {
+    console.log(participant.tracks.values())
     setPublications(Array.from(participant.tracks.values()));
     setSubscribedTracks(
       Array.from(participant.tracks.values()).filter((pub) => {

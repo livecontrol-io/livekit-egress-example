@@ -1,8 +1,11 @@
 import axios from "axios";
+import { createLocalVideoTrack } from "livekit-client";
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { Participant } from "./components/participant";
+import { VideoInputSelector } from "./components/video-input-selector";
 import { useLivekit, useRoom } from "./livekit";
+import { useDevice } from "./livekit/hooks/use-device";
 import { UserSettings } from "./livekit/types";
 
 function App() {
@@ -18,7 +21,9 @@ function App() {
   const query = new URLSearchParams(location.search);
   const { room, connect, connected } = useLivekit();
   const { participants } = useRoom();
+  const { availableDevices } = useDevice("videoinput");
   const { share, audio, video } = toggler;
+  const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState<string>();
 
   const handleConnect = useCallback(() => {
     connect({
@@ -32,6 +37,15 @@ function App() {
           .then((data) => data.data.token),
     });
   }, [connect, query]);
+
+  const handlePublishLocalVideoTrack = useCallback(async () => {
+    const track = await createLocalVideoTrack({
+      deviceId: selectedVideoDeviceId,
+    });
+
+    console.log("Track", track);
+    return room?.localParticipant.publishTrack(track);
+  }, [room, selectedVideoDeviceId]);
 
   const handleTogglerSwitch = useCallback(
     (method: "share" | "audio" | "camera") => async () => {
@@ -56,7 +70,12 @@ function App() {
             }));
             break;
           case "camera":
-            await room.localParticipant.setCameraEnabled(!video);
+            await room.localParticipant.setCameraEnabled(false);
+            room.localParticipant.tracks.clear();
+
+            if (!video) {
+              await handlePublishLocalVideoTrack();
+            }
 
             setToggler((prev) => ({
               ...prev,
@@ -71,12 +90,11 @@ function App() {
     [toggler, room]
   );
 
-  const handleStopCamera = useCallback(() => {
-    stop();
-  }, [stop]);
+  console.log(availableDevices);
 
   return (
     <div className="App flex flex-col justify-center items-center gap-y-10">
+      <VideoInputSelector onDeviceIdSelect={setSelectedVideoDeviceId} />
       {!connected && (
         <button className="btn btn-primary" onClick={handleConnect}>
           Connect
@@ -91,6 +109,7 @@ function App() {
       {!!connected && (
         <div className="flex flex-row gap-x-10">
           <button
+            disabled={!selectedVideoDeviceId}
             className="btn btn-primary"
             onClick={handleTogglerSwitch("camera")}
           >
