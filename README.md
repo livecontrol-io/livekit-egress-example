@@ -25,3 +25,9 @@ sh server.sh
 npm i
 npm run dev
 ```
+
+# Docker-compose
+
+```sh
+docker-compose up
+```
