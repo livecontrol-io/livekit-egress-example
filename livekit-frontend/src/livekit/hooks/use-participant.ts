@@ -28,6 +28,16 @@ export const useParticipant = (participant: Participant) => {
       .on(ParticipantEvent.LocalTrackUnpublished, handlePublicationsChanged)
       .on(ParticipantEvent.TrackSubscribed, handlePublicationsChanged)
       .on(ParticipantEvent.TrackUnsubscribed, handlePublicationsChanged);
+
+    return () => {
+      participant
+        .off(ParticipantEvent.TrackPublished, handlePublicationsChanged)
+        .off(ParticipantEvent.TrackUnpublished, handlePublicationsChanged)
+        .off(ParticipantEvent.LocalTrackPublished, handlePublicationsChanged)
+        .off(ParticipantEvent.LocalTrackUnpublished, handlePublicationsChanged)
+        .off(ParticipantEvent.TrackSubscribed, handlePublicationsChanged)
+        .off(ParticipantEvent.TrackUnsubscribed, handlePublicationsChanged);
+    };
   }, [handlePublicationsChanged]);
 
   return {

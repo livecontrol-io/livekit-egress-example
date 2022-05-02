@@ -19,6 +19,18 @@ export const useRoom = () => {
     setParticipants([room!.localParticipant, ...room!.participants.values()]);
   }, [room]);
 
+  const handleStateChange = useCallback((state: RoomState) => {
+    switch (state) {
+      case RoomState.Connected:
+        setConnected(true);
+        break;
+      case RoomState.Disconnected:
+        setConnected(false);
+      default:
+        setConnected(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!room) return;
 
@@ -37,25 +49,20 @@ export const useRoom = () => {
       .on(RoomEvent.TrackUnsubscribed, handleParticipantsChange)
       .on(RoomEvent.LocalTrackPublished, handleParticipantsChange)
       .on(RoomEvent.LocalTrackUnpublished, handleParticipantsChange)
-      .on(RoomEvent.StateChanged, (state: RoomState) => {
-        switch (state) {
-          case RoomState.Connected:
-            setConnected(true);
-            break;
-          case RoomState.Disconnected:
-            setConnected(false);
-          default:
-            setConnected(false);
-        }
-      });
-
-    console.log("Room");
+      .on(RoomEvent.StateChanged, handleStateChange);
 
     return () => {
-      console.log("Unroom");
-      room?.disconnect();
+      room
+        .off(RoomEvent.ParticipantConnected, handleParticipantsChange)
+        .off(RoomEvent.ParticipantDisconnected, handleParticipantsChange)
+        .off(RoomEvent.TrackSubscribed, handleParticipantsChange)
+        .off(RoomEvent.TrackUnsubscribed, handleParticipantsChange)
+        .off(RoomEvent.LocalTrackPublished, handleParticipantsChange)
+        .off(RoomEvent.LocalTrackUnpublished, handleParticipantsChange)
+        .off(RoomEvent.StateChanged, handleStateChange)
+        .disconnect();
     };
-  }, [room]);
+  }, [room, handleStateChange, handleParticipantsChange]);
 
   return useMemo(
     () => ({
