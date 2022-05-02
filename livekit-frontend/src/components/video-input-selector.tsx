@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useDevice } from "../livekit/hooks/use-device";
 
 const VideoPreview = ({ stream }: { stream: MediaStream }) => {
@@ -31,41 +31,62 @@ export const VideoInputSelector = ({
 }: {
   onDeviceIdSelect: (id: string) => void;
 }) => {
-  const [data, setData] = useState<[string, string, MediaStream][]>([]);
+  const [deviceId, setDeviceId] = useState<string>();
+  const [data, setData] = useState<{
+    label: string;
+    id: string;
+    stream: MediaStream;
+  }>({});
   const { availableDevices, select } = useDevice("videoinput");
 
   useEffect(() => {
+    if (!availableDevices.length) return;
+    const currentId = !deviceId ? availableDevices[0].deviceId : deviceId;
+
     (async () => {
-      setData(
-        await Promise.all(
-          availableDevices.map(async (d) => [
-            d.label,
-            d.deviceId,
-            await select(d.deviceId),
-          ])
-        )
+      const info = availableDevices.find(
+        (d: InputDeviceInfo) => d.deviceId === currentId
       );
+      setData({
+        label: info.label,
+        id: info.deviceId,
+        stream: await select(currentId),
+      });
     })();
-  }, [availableDevices, select]);
+  }, [deviceId, availableDevices]);
 
   return (
     <div className="flex flex-col gap-y-4 p-5 bg-black bg-opacity-30 bordered rounded-lg">
       <span>Choose the video input device:</span>
-      <div className="flex flex-row gap-x-10">
-        {data.map(([label, deviceId, stream]) => (
+      <div className="flex flex-col gap-y-5">
+        <select
+          defaultValue={
+            availableDevices.length ? availableDevices[0].deviceId : undefined
+          }
+          onChange={(e) => setDeviceId(e.target.value)}
+          className="select"
+        >
+          {availableDevices.map(({ label, deviceId }) => (
+            <option key={deviceId} className="btn" value={deviceId}>
+              {label}
+            </option>
+          ))}
+        </select>
+
+        {!!data.id && (
           <div
-            onClick={() => onDeviceIdSelect(deviceId)}
-            key={stream.id}
-            className="card w-60 cursor-pointer hover:ring bg-base-100 shadow-xl image-full"
+            onClick={() => onDeviceIdSelect(data.id)}
+            key={data.id}
+            className="card w-60 h-40 cursor-pointer hover:ring bg-base-100 shadow-xl image-full"
           >
             <figure>
-              <VideoPreview stream={stream} />
+              <VideoPreview stream={data.stream} />
             </figure>
             <div className="card-body">
-              <h2 className="card-title text-sm">{label}</h2>
+              <h2 className="card-title text-sm">{data.label}</h2>
             </div>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

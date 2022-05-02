@@ -9,12 +9,11 @@ const env = {
   ...process.env,
 };
 
-console.log("KOA", env.LC_KOA_PATH);
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   envPrefix: "LC_",
+  env,
   server: {
     proxy: {
       "/koa": {

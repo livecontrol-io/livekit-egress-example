@@ -27,7 +27,7 @@ function App() {
 
   const handleConnect = useCallback(() => {
     connect({
-      url: "ws://localhost:7880",
+      url: `ws://${import.meta.env.LC_EXT_IP}:7880`,
       token: () =>
         axios
           .post<string, any, UserSettings>(`/koa/token`, {
@@ -43,7 +43,6 @@ function App() {
       deviceId: selectedVideoDeviceId,
     });
 
-    console.log("Track", track);
     return room?.localParticipant.publishTrack(track);
   }, [room, selectedVideoDeviceId]);
 
@@ -89,8 +88,6 @@ function App() {
     },
     [toggler, room]
   );
-
-  console.log(availableDevices);
 
   return (
     <div className="App flex flex-col justify-center items-center gap-y-10">

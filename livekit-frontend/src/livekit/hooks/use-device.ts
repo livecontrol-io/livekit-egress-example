@@ -3,17 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 export const useDevice = (type: "audioinput" | "videoinput") => {
   const [devicesInfo, setDevicesInfo] = useState<InputDeviceInfo[]>([]);
 
-  const handleSelectDevice = useCallback(
-    (id: string) =>
-      navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: {
-            exact: id,
-          },
-        },
-      }),
-    []
-  );
+  const handleSelectDevice = useCallback((id: string) => {
+    return navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: id,
+      },
+    });
+  }, []);
 
   useEffect(() => {
     (async () => {
