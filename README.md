@@ -31,3 +31,8 @@ npm run dev
 ```sh
 docker-compose up
 ```
+
+
+## Usage
+
+Go to the `http://localhost:3000/?identity=<id>&name=<name>` and press `connect` to start streaming!
