@@ -108,9 +108,6 @@ function App() {
           >
             {share ? "Stop share" : "Share"}
           </button>
-          <button className="btn btn-primary" onClick={handleStopCamera}>
-            Stop
-          </button>
         </div>
       )}
     </div>
