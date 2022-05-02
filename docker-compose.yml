@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  livekit-server:
+    image: livekit/livekit-server:vfix-node-ip-SNAPSHOT
+    restart: always
+    ports:
+      - '7880:7880'
+      - '7881:7881'
+      - '7882:7882/udp'
+    expose:
+      - 7880
+      - 7881
+      - '7882/udp'
+      - '50000-60000/udp'
+    volumes:
+      - './livekit.yaml:/livekit.yaml'
+    command: "--config /livekit.yaml --dev --node-ip 127.0.0.1"
+  livekit-frontend:
+    build:
+      context: ./livekit-frontend
+    depends_on:
+      - livekit-koa
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./livekit-frontend/src:/app/src
+    environment:
+      - LC_KOA_PATH=http://livekit-koa:8081
+  livekit-koa:
+    build:
+      context: ./livekit-koa
+    depends_on:
+      - livekit-server
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./livekit-koa/src:/app/src
+    environment:
+      - API_KEY=APIzQRiooeUwuSA
+      - API_SECRET=NyPHptlKhorsaqLvlUKmTjIV6Tac8qZOixpJsaPmYuO
+      - PORT=8081
