@@ -62,7 +62,7 @@ export const VideoInputSelector = ({
               <VideoPreview stream={stream} />
             </figure>
             <div className="card-body">
-              <h2 className="card-title">{label}</h2>
+              <h2 className="card-title text-sm">{label}</h2>
             </div>
           </div>
         ))}
