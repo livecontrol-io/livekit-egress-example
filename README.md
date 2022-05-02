@@ -38,6 +38,12 @@ Open /livekit-frontend/`.env`
 
 Change `LC_EXT_IP` to your network external ip.
 
+Example command to get your ip:
+
+```sh
+$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+```
+
 ## Usage
 
 Go to the `http://localhost:3000/?identity=<id>&name=<name>` and press `connect` to start streaming!
