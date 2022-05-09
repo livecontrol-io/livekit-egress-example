@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  livekit-server:
+  livekit:
     image: livekit/livekit-server:vfix-node-ip-SNAPSHOT
     restart: always
     ports:
@@ -16,26 +16,26 @@ services:
     volumes:
       - './livekit.yaml:/livekit.yaml'
     command: "--config /livekit.yaml --dev --node-ip 127.0.0.1"
-  livekit-frontend:
+  frontend:
     build:
-      context: ./livekit-frontend
+      context: ./packages/frontend
     depends_on:
-      - livekit-koa
+      - backend
     ports:
       - "3000:3000"
     volumes:
-      - ./livekit-frontend/src:/app/src
+      - ./packages/frontend/src:/app/src
     environment:
       - LC_KOA_PATH=http://livekit-koa:8081
-  livekit-koa:
+  backend:
     build:
-      context: ./livekit-koa
+      context: ./packages/backend
     depends_on:
-      - livekit-server
+      - livekit
     ports:
       - "8081:8081"
     volumes:
-      - ./livekit-koa/src:/app/src
+      - ./packages/backend/src:/app/src
     environment:
       - API_KEY=APIzQRiooeUwuSA
       - API_SECRET=NyPHptlKhorsaqLvlUKmTjIV6Tac8qZOixpJsaPmYuO

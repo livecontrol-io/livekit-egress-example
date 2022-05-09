@@ -1,0 +1,28 @@
+{
+  "name": "@livekit-example/base",
+  "version": "1.0.0",
+  "description": "- Docker - npm",
+  "main": "index.js",
+  "devDependencies": {
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "typescript": "^4.6.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fiWhy/livekit-example.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fiWhy/livekit-example/issues"
+  },
+  "homepage": "https://github.com/fiWhy/livekit-example#readme"
+}
