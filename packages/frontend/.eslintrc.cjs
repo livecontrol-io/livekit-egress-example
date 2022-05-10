@@ -1,6 +1,8 @@
 module.exports = {
   parserOptions: {
-    project: 'tsconfig.json',
+    ecmaVersion: 2021,
+    sourceType: 'module',
+    project: './tsconfig.json',
     tsconfigRootDir: __dirname,
   },
   ignorePatterns: ['tailwind.config.cjs', 'postcss.config.cjs'],

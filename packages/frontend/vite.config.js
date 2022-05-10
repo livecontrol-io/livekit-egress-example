@@ -7,6 +7,7 @@ import checker from 'vite-plugin-checker';
 import eslintPlugin from 'vite-plugin-eslint';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
+const container = process.env.LC_CONTAINER === 'true';
 const dirName = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
@@ -25,9 +26,9 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    envPrefix: 'REACT_APP_',
+    envPrefix: 'LC_',
     plugins: [
-      eslintPlugin(),
+      container ? undefined : eslintPlugin(),
       createHtmlPlugin(),
       moduleInterop(checker)({ typescript: true }),
       react({
