@@ -1,9 +1,5 @@
-import {
-  Participant,
-  ParticipantEvent,
-  Track,
-  TrackPublication,
-} from 'livekit-client';
+import type { Participant, TrackPublication } from 'livekit-client';
+import { ParticipantEvent, Track } from 'livekit-client';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useParticipant = (participant: Participant) => {

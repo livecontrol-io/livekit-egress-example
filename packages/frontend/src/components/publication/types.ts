@@ -1,4 +1,4 @@
-import { Participant, TrackPublication } from 'livekit-client';
+import type { Participant, TrackPublication } from 'livekit-client';
 
 export interface Props {
   participant: Participant;

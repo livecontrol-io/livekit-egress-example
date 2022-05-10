@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-export const useDevice = (type: "audioinput" | "videoinput") => {
+export const useDevice = (type: 'audioinput' | 'videoinput') => {
   const [devicesInfo, setDevicesInfo] = useState<InputDeviceInfo[]>([]);
 
   const handleSelectDevice = useCallback((id: string) => {
@@ -11,15 +11,15 @@ export const useDevice = (type: "audioinput" | "videoinput") => {
     });
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      setDevicesInfo(
-        (await navigator.mediaDevices.enumerateDevices()).filter(
-          (d) => d.kind === type
-        )
-      );
-    })();
+  const handleUpdateDevices = useCallback(async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    setDevicesInfo(devices.filter((d) => d.kind === type));
   }, [type]);
+
+  useEffect(() => {
+    void handleUpdateDevices();
+  }, [handleUpdateDevices]);
 
   return {
     availableDevices: devicesInfo,

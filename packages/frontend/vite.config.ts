@@ -1,14 +1,11 @@
 import { moduleInterop } from '@textlint/module-interop';
 import react from '@vitejs/plugin-react';
-import { config } from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import eslintPlugin from 'vite-plugin-eslint';
 import { createHtmlPlugin } from 'vite-plugin-html';
-
-const env = config({ path: '.env' }).parsed;
 
 const dirName = path.dirname(fileURLToPath(import.meta.url));
 

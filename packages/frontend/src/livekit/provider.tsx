@@ -1,9 +1,10 @@
-import { Room, VideoPresets } from "livekit-client";
-import { PropsWithChildren, useCallback, useMemo, useState } from "react";
-import { Context } from "./constants";
-import { Settings } from "./types";
+import { Room, VideoPresets } from 'livekit-client';
+import { useCallback, useMemo, useState } from 'react';
+import type { PropsWithChildren } from '~/types';
+import { Context } from './constants';
+import type { Settings } from './types';
 
-export const Provider = ({ children }: PropsWithChildren<{}>) => {
+export const Provider = ({ children }: PropsWithChildren) => {
   const [room, setRoom] = useState<Room>();
   const [connected, setConnected] = useState<boolean>(false);
 
@@ -19,25 +20,23 @@ export const Provider = ({ children }: PropsWithChildren<{}>) => {
   );
 
   const handleConnect = useCallback(
-    async (settings: Settings) => {
-      try {
-        setConnected(false);
-        const room = new Room({
-          // automatically manage subscribed video quality
-          adaptiveStream: true,
+    (settings: Settings) => {
+      setConnected(false);
+      const room = new Room({
+        // automatically manage subscribed video quality
+        adaptiveStream: true,
 
-          // optimize publishing bandwidth and CPU for simulcasted tracks
-          dynacast: true,
+        // optimize publishing bandwidth and CPU for simulcasted tracks
+        dynacast: true,
 
-          // default capture settings
-          videoCaptureDefaults: {
-            resolution: VideoPresets.h720,
-          },
-        });
-        setRoom(room);
+        // default capture settings
+        videoCaptureDefaults: {
+          resolution: VideoPresets.h720,
+        },
+      });
+      setRoom(room);
 
-        handleRoomConnect(room, settings);
-      } catch (error) {}
+      void handleRoomConnect(room, settings);
     },
     [handleRoomConnect]
   );

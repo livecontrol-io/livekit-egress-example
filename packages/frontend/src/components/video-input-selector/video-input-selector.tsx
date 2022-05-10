@@ -1,59 +1,37 @@
-import { useEffect, useRef, useCallback, useState, VFC } from 'react';
-import { Maybe } from '~/types';
+import { useCallback, useEffect, useState } from 'react';
+import type { Maybe } from '~/types';
 import { useDevice } from '../../livekit/hooks/use-device';
-import { InputInfo, Props } from './types';
-
-const VideoPreview = ({ stream }: { stream: MediaStream }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    (async () => {
-      if (!videoRef.current) return;
-
-      videoRef.current.onerror = console.log;
-      videoRef.current.onprogress = console.log;
-      videoRef.current.srcObject = stream;
-      try {
-        await videoRef.current.play();
-      } catch (error) {}
-    })();
-
-    return () => {
-      if (!videoRef.current) return;
-
-      videoRef.current.srcObject = null;
-    };
-  }, [stream]);
-
-  return <video className="w-full h-full" ref={videoRef} />;
-};
+import type { InputInfo, Props } from './types';
+import { VideoPreview } from './video-preview';
 
 export const VideoInputSelector = ({ onDeviceIdSelect }: Props) => {
   const [deviceId, setDeviceId] = useState<string>();
   const [data, setData] = useState<Maybe<InputInfo>>();
   const { availableDevices, select } = useDevice('videoinput');
 
-  useEffect(() => {
+  const handleUpdateDeviceOutput = useCallback(async () => {
     if (!availableDevices.length) return;
     const currentId = !deviceId ? availableDevices[0].deviceId : deviceId;
 
-    (async () => {
-      const info = availableDevices.find(
-        (d: InputDeviceInfo) => d.deviceId === currentId
-      );
+    const info = availableDevices.find(
+      (d: InputDeviceInfo) => d.deviceId === currentId
+    );
 
-      if (!info) return;
+    if (!info) return;
 
-      setData({
-        label: info.label,
-        id: info.deviceId,
-        stream: await select(currentId),
-      });
-    })();
-  }, [deviceId, availableDevices]);
+    setData({
+      label: info.label,
+      id: info.deviceId,
+      stream: await select(currentId),
+    });
+  }, [availableDevices, deviceId]);
+
+  useEffect(() => {
+    void handleUpdateDeviceOutput();
+  }, [handleUpdateDeviceOutput]);
 
   return (
-    <div className="flex flex-col gap-y-4 p-5 bg-black bg-opacity-30 bordered rounded-lg">
+    <div className="flex flex-col gap-y-4 p-5 bg-black rounded-lg opacity-30 bordered">
       <span>Choose the video input device:</span>
       <div className="flex flex-col gap-y-5">
         <select
@@ -74,13 +52,13 @@ export const VideoInputSelector = ({ onDeviceIdSelect }: Props) => {
           <div
             onClick={() => onDeviceIdSelect(data.id)}
             key={data.id}
-            className="card w-60 h-40 cursor-pointer hover:ring bg-base-100 shadow-xl image-full"
+            className="w-60 h-40 hover:ring shadow-xl cursor-pointer card bg-base-100 image-full"
           >
             <figure>
               <VideoPreview stream={data.stream} />
             </figure>
             <div className="card-body">
-              <h2 className="card-title text-sm">{data.label}</h2>
+              <h2 className="text-sm card-title">{data.label}</h2>
             </div>
           </div>
         )}

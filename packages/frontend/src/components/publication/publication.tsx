@@ -1,7 +1,8 @@
-import { Track, TrackPublication } from 'livekit-client';
+import type { TrackPublication } from 'livekit-client';
+import { Track } from 'livekit-client';
 import { useMemo } from 'react';
 import { Video } from '../video/video';
-import { Props } from './types';
+import type { Props } from './types';
 
 export const Publication = ({ participant }: Props) => {
   const { video } = useMemo(

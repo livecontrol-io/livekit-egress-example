@@ -1,4 +1,4 @@
-import { IdentityState } from './types';
+import type { IdentityState } from './types';
 
 export const defaultState: IdentityState = {
   name: 'myself',

@@ -3,7 +3,8 @@ import { createLocalVideoTrack } from 'livekit-client';
 import { useCallback, useState } from 'react';
 import './App.css';
 import { Canvas, Participant, VideoInputSelector } from './components';
-import { useLivekit, useRoom, UserSettings, useDevice } from './livekit';
+import type { UserSettings } from './livekit';
+import { useLivekit, useRoom } from './livekit';
 
 function App() {
   const [toggler, setToggler] = useState<{
@@ -18,18 +19,24 @@ function App() {
   const query = new URLSearchParams(location.search);
   const { room, connect, connected } = useLivekit();
   const { participants } = useRoom();
-  const { availableDevices } = useDevice('videoinput');
   const { share, audio, video } = toggler;
   const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState<string>();
 
   const handleConnect = useCallback(() => {
     connect({
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       url: `ws://${import.meta.env.LC_EXT_IP}:7880`,
       token: () =>
         axios
-          .post<string, any, UserSettings>(`/koa/token`, {
-            identity: query.get('identity')!,
-            name: query.get('name')!,
+          .post<
+            string,
+            {
+              data: { token: string };
+            },
+            UserSettings
+          >(`/koa/token`, {
+            identity: query.get('identity') ?? '',
+            name: query.get('name') ?? '',
           })
           .then((data) => data.data.token),
     });
@@ -86,15 +93,8 @@ function App() {
     [toggler, room]
   );
 
-  const handleStreamCanvas = useCallback(
-    (track: MediaStreamTrack) => {
-      room?.localParticipant.publishTrack(track);
-    },
-    [room]
-  );
-
   return (
-    <div className="App flex flex-col justify-center items-center gap-y-10">
+    <div className="flex flex-col gap-y-10 justify-center items-center App">
       <VideoInputSelector onDeviceIdSelect={setSelectedVideoDeviceId} />
       {!connected && (
         <button className="btn btn-primary" onClick={handleConnect}>

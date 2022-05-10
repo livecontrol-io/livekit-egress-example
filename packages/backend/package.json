@@ -17,7 +17,9 @@
     "nodemon": "^2.0.15"
   },
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "lint": "run-s lint:*",
+    "lint:eslint": "eslint . --fix"
   },
   "author": "",
   "license": "ISC",

@@ -1,4 +1,5 @@
-import { Participant, RemoteTrack, RoomEvent, RoomState } from 'livekit-client';
+import type { Participant, RemoteTrack } from 'livekit-client';
+import { RoomEvent, RoomState } from 'livekit-client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLivekit } from './use-livekit';
 
@@ -9,7 +10,9 @@ export const useRoom = () => {
   const [connected, setConnected] = useState<boolean>(false);
 
   const handleParticipantsChange = useCallback(() => {
-    setParticipants([room!.localParticipant, ...room!.participants.values()]);
+    if (!room) return;
+
+    setParticipants([room.localParticipant, ...room.participants.values()]);
   }, [room]);
 
   const handleStateChange = useCallback((state: RoomState) => {
@@ -30,7 +33,7 @@ export const useRoom = () => {
 
     setParticipants((currentParticipants) => [
       ...currentParticipants,
-      room!.localParticipant,
+      room.localParticipant,
     ]);
 
     room

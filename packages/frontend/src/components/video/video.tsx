@@ -1,6 +1,5 @@
-import { TrackPublication, VideoTrack } from 'livekit-client';
-import { HTMLAttributes, useEffect, useRef } from 'react';
-import { Props } from './types';
+import { useEffect, useRef } from 'react';
+import type { Props } from './types';
 
 export const Video = ({ source, ...props }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);

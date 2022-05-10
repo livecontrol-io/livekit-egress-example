@@ -1,6 +1,7 @@
-import { FormEvent, useCallback, useState } from 'react';
+import type { FormEvent } from 'react';
+import { useCallback, useState } from 'react';
 import { defaultState } from './constants';
-import { IdentityState, Props } from './types';
+import type { IdentityState, Props } from './types';
 
 export const Connect = ({ onSubmit }: Props) => {
   const [state, setState] = useState<IdentityState>(defaultState);

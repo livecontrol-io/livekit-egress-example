@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Props } from './types';
+import type { Props } from './types';
 
 export const Audio = ({ source, ...props }: Props) => {
   const audioRef = useRef<HTMLAudioElement>(null);

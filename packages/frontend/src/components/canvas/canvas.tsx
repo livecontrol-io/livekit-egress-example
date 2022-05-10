@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef } from 'react';
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
