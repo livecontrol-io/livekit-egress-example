@@ -5,3 +5,6 @@ export * from './participant';
 export * from './video-input-selector';
 export * from './connect';
 export * from './canvas';
+export * from './showcase';
+export * from './livekit-controls';
+export * from './container';

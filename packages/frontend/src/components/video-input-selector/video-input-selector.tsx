@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Maybe } from '~/types';
 import { useDevice } from '../../livekit/hooks/use-device';
+import { VideoOutput } from '../video-output';
 import type { InputInfo, Props } from './types';
-import { VideoPreview } from './video-preview';
 
 export const VideoInputSelector = ({ onDeviceIdSelect }: Props) => {
   const [deviceId, setDeviceId] = useState<string>();
@@ -55,7 +55,7 @@ export const VideoInputSelector = ({ onDeviceIdSelect }: Props) => {
             className="w-60 h-40 hover:ring shadow-xl cursor-pointer card bg-base-100 image-full"
           >
             <figure>
-              <VideoPreview stream={data.stream} />
+              <VideoOutput stream={data.stream} />
             </figure>
             <div className="card-body">
               <h2 className="text-sm card-title">{data.label}</h2>

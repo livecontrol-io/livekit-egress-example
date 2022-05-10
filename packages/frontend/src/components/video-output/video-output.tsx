@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
+import type { Props } from './types';
 
-export const VideoPreview = ({ stream }: { stream: MediaStream }) => {
+export const VideoOutput = ({ stream }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleUpdateVideo = useCallback(async () => {
@@ -22,5 +23,5 @@ export const VideoPreview = ({ stream }: { stream: MediaStream }) => {
     };
   }, [handleUpdateVideo]);
 
-  return <video className="w-full h-full" ref={videoRef} />;
+  return <video autoPlay muted className="w-full h-full" ref={videoRef} />;
 };

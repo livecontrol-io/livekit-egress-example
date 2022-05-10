@@ -1,68 +1,34 @@
 import { useCallback, useState } from 'react';
-import { useLivekitConnect } from '~/hooks';
+import type { PluginLayer } from '~/livekit-plugins';
+import { pluginsList } from '~/livekit-plugins';
 import './App.css';
-import { Canvas, Participant, VideoInputSelector } from './components';
-import { useLivekit, useRoom, useToggler } from './livekit';
+import { Canvas, Container, Showcase } from './components';
+import { VideoOutput } from './components/video-output';
 
 function App() {
-  const query = new URLSearchParams(location.search);
-  const { room, connected } = useLivekit();
-  const { participants } = useRoom();
-  const { info, toggle } = useToggler(room);
-  const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState<string>();
-  const livekitConnect = useLivekitConnect(
-    query.get('identity') ?? '',
-    query.get('name') ?? ''
-  );
+  const [stream, setStream] = useState<MediaStream>();
+  const [elements, setElements] = useState<PluginLayer[]>([]);
 
-  const handleConnect = useCallback(() => {
-    livekitConnect();
-  }, [livekitConnect]);
+  const handleAddLayer = useCallback((layer: PluginLayer) => {
+    setElements([layer]);
+  }, []);
 
   return (
-    <div className="flex flex-col gap-y-10 justify-center items-center App">
-      <VideoInputSelector onDeviceIdSelect={setSelectedVideoDeviceId} />
-      {!connected && (
-        <button className="btn btn-primary" onClick={handleConnect}>
-          Connect
-        </button>
-      )}
-      <Canvas />
-      <div className="flex flex-row gap-x-10">
-        {!!participants.length &&
-          participants.map((participant) => (
-            <Participant key={participant.sid} participant={participant} />
-          ))}
+    <div className="flex flex-col gap-10 p-10 App">
+      <div className="flex flex-row flex-1 gap-x-10 w-full">
+        <Container className="flex-1 w-full">
+          <Canvas elements={elements} onMediaLoad={setStream} />
+        </Container>
+        <Container className="flex-1">
+          {stream && <VideoOutput stream={stream} />}
+        </Container>
       </div>
-      {!!connected && (
-        <div className="flex flex-row gap-x-10">
-          <button
-            disabled={!selectedVideoDeviceId}
-            className="btn btn-primary"
-            onClick={toggle({
-              type: 'video',
-            })}
-          >
-            {info.video ? 'Stop camera' : 'Camera'}
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={toggle({
-              type: 'audio',
-            })}
-          >
-            {info.audio ? 'Stop mic' : 'mic'}
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={toggle({
-              type: 'share',
-            })}
-          >
-            {info.share ? 'Stop share' : 'Share'}
-          </button>
-        </div>
-      )}
+      <Container className="flex flex-initial w-full h-2/6">
+        <Showcase
+          onAddLayer={handleAddLayer}
+          plugins={Object.values(pluginsList)}
+        />
+      </Container>
     </div>
   );
 }
