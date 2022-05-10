@@ -1,97 +1,23 @@
-import axios from 'axios';
-import { createLocalVideoTrack } from 'livekit-client';
 import { useCallback, useState } from 'react';
+import { useLivekitConnect } from '~/hooks';
 import './App.css';
 import { Canvas, Participant, VideoInputSelector } from './components';
-import type { UserSettings } from './livekit';
-import { useLivekit, useRoom } from './livekit';
+import { useLivekit, useRoom, useToggler } from './livekit';
 
 function App() {
-  const [toggler, setToggler] = useState<{
-    share: boolean;
-    audio: boolean;
-    video: boolean;
-  }>({
-    share: false,
-    video: false,
-    audio: false,
-  });
   const query = new URLSearchParams(location.search);
-  const { room, connect, connected } = useLivekit();
+  const { room, connected } = useLivekit();
   const { participants } = useRoom();
-  const { share, audio, video } = toggler;
+  const { info, toggle } = useToggler(room);
   const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState<string>();
+  const livekitConnect = useLivekitConnect(
+    query.get('identity') ?? '',
+    query.get('name') ?? ''
+  );
 
   const handleConnect = useCallback(() => {
-    connect({
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      url: `ws://${import.meta.env.LC_EXT_IP}:7880`,
-      token: () =>
-        axios
-          .post<
-            string,
-            {
-              data: { token: string };
-            },
-            UserSettings
-          >(`/koa/token`, {
-            identity: query.get('identity') ?? '',
-            name: query.get('name') ?? '',
-          })
-          .then((data) => data.data.token),
-    });
-  }, [connect, query]);
-
-  const handlePublishLocalVideoTrack = useCallback(async () => {
-    const track = await createLocalVideoTrack({
-      deviceId: selectedVideoDeviceId,
-    });
-
-    return room?.localParticipant.publishTrack(track);
-  }, [room, selectedVideoDeviceId]);
-
-  const handleTogglerSwitch = useCallback(
-    (method: 'share' | 'audio' | 'camera') => async () => {
-      const { share, video, audio } = toggler;
-      if (!room) return;
-      try {
-        switch (method) {
-          case 'share':
-            await room.localParticipant.setScreenShareEnabled(!share);
-
-            setToggler((prev) => ({
-              ...prev,
-              share: !share,
-            }));
-            break;
-          case 'audio':
-            await room.localParticipant.setMicrophoneEnabled(!audio);
-
-            setToggler((prev) => ({
-              ...prev,
-              audio: !audio,
-            }));
-            break;
-          case 'camera':
-            await room.localParticipant.setCameraEnabled(false);
-            room.localParticipant.tracks.clear();
-
-            if (!video) {
-              await handlePublishLocalVideoTrack();
-            }
-
-            setToggler((prev) => ({
-              ...prev,
-              video: !video,
-            }));
-            break;
-        }
-      } catch (_) {
-        console.log('Error', _);
-      }
-    },
-    [toggler, room]
-  );
+    livekitConnect();
+  }, [livekitConnect]);
 
   return (
     <div className="flex flex-col gap-y-10 justify-center items-center App">
@@ -113,21 +39,27 @@ function App() {
           <button
             disabled={!selectedVideoDeviceId}
             className="btn btn-primary"
-            onClick={handleTogglerSwitch('camera')}
+            onClick={toggle({
+              type: 'video',
+            })}
           >
-            {video ? 'Stop camera' : 'Camera'}
+            {info.video ? 'Stop camera' : 'Camera'}
           </button>
           <button
             className="btn btn-primary"
-            onClick={handleTogglerSwitch('audio')}
+            onClick={toggle({
+              type: 'audio',
+            })}
           >
-            {audio ? 'Stop mic' : 'mic'}
+            {info.audio ? 'Stop mic' : 'mic'}
           </button>
           <button
             className="btn btn-primary"
-            onClick={handleTogglerSwitch('share')}
+            onClick={toggle({
+              type: 'share',
+            })}
           >
-            {share ? 'Stop share' : 'Share'}
+            {info.share ? 'Stop share' : 'Share'}
           </button>
         </div>
       )}

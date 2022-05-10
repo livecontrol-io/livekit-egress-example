@@ -26,7 +26,7 @@ services:
     volumes:
       - ./packages/frontend/src:/app/src
     environment:
-      - LC_KOA_PATH=http://livekit-koa:8081
+      - LC_KOA_PATH=http://backend:8081
       - LC_CONTAINER=true
   backend:
     build:

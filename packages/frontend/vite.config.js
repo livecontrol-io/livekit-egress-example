@@ -6,9 +6,17 @@ import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import eslintPlugin from 'vite-plugin-eslint';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import { config } from 'dotenv';
 
 const container = process.env.LC_CONTAINER === 'true';
 const dirName = path.dirname(fileURLToPath(import.meta.url));
+
+const env = {
+  ...config({
+    path: '.env',
+  }).parsed,
+  ...process.env,
+};
 
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production';
@@ -39,6 +47,15 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: [{ find: '~', replacement: path.join(dirName, 'src') }],
+    },
+    env,
+    server: {
+      proxy: {
+        '/backend': {
+          target: env.LC_KOA_PATH,
+          rewrite: (path) => path.replace(/^\/backend/, ''),
+        },
+      },
     },
   };
 });
