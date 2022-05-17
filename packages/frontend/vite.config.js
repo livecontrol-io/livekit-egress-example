@@ -52,8 +52,12 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/backend': {
-          target: env.LC_KOA_PATH,
+          target: env.LC_BACKEND_PATH,
           rewrite: (path) => path.replace(/^\/backend/, ''),
+        },
+        '/production': {
+          target: env.LC_PRODUCTION_PATH,
+          rewrite: (path) => path.replace(/^\/production/, ''),
         },
       },
     },

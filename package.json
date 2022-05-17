@@ -12,6 +12,9 @@
     "prettier": "^2.6.2",
     "typescript": "^4.6.4"
   },
+  "peerDependencies": {
+    "konva": "^8.3.8"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npm run lint --workspaces"
@@ -22,7 +25,8 @@
   },
   "workspaces": [
     "packages/frontend",
-    "packages/backend"
+    "packages/backend",
+    "packages/production"
   ],
   "keywords": [],
   "author": "",
@@ -30,5 +34,9 @@
   "bugs": {
     "url": "https://github.com/fiWhy/livekit-example/issues"
   },
-  "homepage": "https://github.com/fiWhy/livekit-example#readme"
+  "homepage": "https://github.com/fiWhy/livekit-example#readme",
+  "dependencies": {
+    "@livekit-example/production": "file:packages/production",
+    "puppeteer": "^14.1.0"
+  }
 }

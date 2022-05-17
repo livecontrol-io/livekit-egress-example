@@ -2,8 +2,13 @@ import axios from 'axios';
 import { useCallback } from 'react';
 import type { UserSettings } from '~/livekit';
 import { useLivekit } from '~/livekit';
+import type { Maybe } from '~/types';
 
-export const useLivekitConnect = (identity: string, name: string) => {
+export const useLivekitConnect = (
+  identity: string,
+  name: string,
+  room?: Maybe<string>
+) => {
   const { connect } = useLivekit();
   return useCallback(() => {
     connect({
@@ -20,6 +25,7 @@ export const useLivekitConnect = (identity: string, name: string) => {
           >(`/backend/token`, {
             identity,
             name,
+            room,
           })
           .then((data) => data.data.token),
     });
