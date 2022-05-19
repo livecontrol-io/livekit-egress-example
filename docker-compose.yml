@@ -21,7 +21,6 @@ services:
       context: ./packages/frontend
     depends_on:
       - backend
-      - production
     ports:
       - "3000:3000"
     volumes:
@@ -43,16 +42,3 @@ services:
       - .env
     environment:
       - PORT=8082
-  production:
-    build:
-      context: ./packages/production
-    depends_on:
-      - livekit
-    ports:
-      - "8083:8083"
-    volumes:
-      - ./packages/production/src:/app/src
-    env_file:
-      - .env
-    environment:
-      - PORT=8083

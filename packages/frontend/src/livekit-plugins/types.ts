@@ -3,7 +3,7 @@ import type Konva from 'konva';
 
 export type Setting =
   | {
-      type: 'string';
+      type: 'text';
       defaultValue: string;
     }
   | {

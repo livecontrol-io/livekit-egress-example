@@ -1,11 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useLivekitConnect } from '~/hooks';
 import { useLivekit, useToggler } from '~/livekit';
 import type { Props } from './types';
 
 export const LivekitControls = ({ isVideoEnabled = true }: Props) => {
-  const query = new URLSearchParams(location.search);
   const { room, connected } = useLivekit();
+  const { search } = useLocation();
+  const query = useMemo(() => new URLSearchParams(search), [search]);
   const { info, toggle } = useToggler(room);
 
   const livekitConnect = useLivekitConnect(

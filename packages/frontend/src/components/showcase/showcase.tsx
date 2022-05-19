@@ -1,7 +1,8 @@
-import type { Props } from './types';
 import cn from 'classnames';
 import { useEffect, useState } from 'react';
 import type { Plugin } from '~/livekit-plugins';
+import { PluginSection } from './components';
+import type { Props } from './types';
 
 export const Showcase = ({
   plugins,
@@ -14,10 +15,18 @@ export const Showcase = ({
 
   useEffect(() => {
     if (!drawContainer) return;
+    drawContainer.innerHTML = '';
     plugin?.plugin(drawContainer, {
       onAddLayer,
     });
   }, [plugin, drawContainer, onAddLayer]);
+
+  // const handlePluginUpdate = useCallback(
+  //   (settings: Record<string, string | number>) => {
+  //     console.log(settings);
+  //   },
+  //   []
+  // );
 
   return (
     <div
@@ -25,23 +34,14 @@ export const Showcase = ({
       {...props}
     >
       {!!plugin && (
-        <div className="flex flex-col p-5 w-2/6 bg-slate-900 rounded-lg">
-          <div>
-            <h2>{plugin.title}</h2>
-          </div>
-          <div className="divider" />
-          <div
-            className="overflow-y-scroll"
-            ref={(ref) => setDrawContainer(ref ?? undefined)}
-          ></div>
-        </div>
+        <PluginSection plugin={plugin} onDrawContainer={setDrawContainer} />
       )}
-      <div className="flex-1">
+      <div className="flex flex-row flex-wrap flex-1 gap-x-10">
         {plugins.map((plugin) => (
           <div
             key={plugin.id}
             onClick={() => setPlugin(plugin)}
-            className="w-72 hover:ring-4 shadow-xl hover:cursor-pointer card bg-base-100"
+            className="w-72 max-h-40 hover:ring-4 shadow-xl hover:cursor-pointer card bg-base-100"
           >
             <div className="card-body">
               <h2 className="card-title">{plugin.title}</h2>
