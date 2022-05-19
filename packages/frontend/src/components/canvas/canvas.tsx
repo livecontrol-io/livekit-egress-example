@@ -24,8 +24,6 @@ export const Canvas = ({
   useEffect(() => {
     if (!layer) return;
 
-    console.log(elements);
-
     elements.forEach((element) => {
       layer.add(element.element);
     });

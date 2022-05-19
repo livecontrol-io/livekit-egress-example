@@ -5,6 +5,7 @@
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
     "livekit-server-sdk": "^0.5.10",
+    "socket.io": "^4.5.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   },

@@ -3,10 +3,14 @@ import type { ParameterizedContext } from 'koa';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import { AccessToken } from 'livekit-server-sdk';
+import { Server } from 'socket.io';
+
+const { API_KEY, API_SECRET, PORT, SOCKET_PORT } = process.env;
+
+const io = new Server(Number(SOCKET_PORT ?? 8082));
 
 const app = new Koa();
 const router: Router = new Router();
-const { API_KEY, API_SECRET, PORT } = process.env;
 
 app.use(bodyParser()).use(router.routes());
 
@@ -42,6 +46,10 @@ router.post<{
   ctx.body = {
     token,
   };
+});
+
+io.on('connection', () => {
+  console.log('Welcome');
 });
 
 app.listen(PORT || 8081);

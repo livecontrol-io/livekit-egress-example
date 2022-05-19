@@ -1,33 +1,21 @@
-import { useCallback, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useLivekitConnect } from '~/hooks';
+import { v4 } from 'uuid';
 import { useLivekit, useToggler } from '~/livekit';
+import { ConnectForm } from './components';
 import type { Props } from './types';
 
-export const LivekitControls = ({ isVideoEnabled = true }: Props) => {
+export const LivekitControls = ({
+  isVideoEnabled = true,
+  onConnect,
+  room: roomName,
+}: Props) => {
   const { room, connected } = useLivekit();
-  const { search } = useLocation();
-  const query = useMemo(() => new URLSearchParams(search), [search]);
   const { info, toggle } = useToggler(room);
 
-  const livekitConnect = useLivekitConnect(
-    query.get('identity') ?? '',
-    query.get('name') ?? ''
-  );
-
-  const handleConnect = useCallback(() => {
-    livekitConnect();
-  }, [livekitConnect]);
-
   return (
-    <>
-      {!connected && (
-        <button className="btn btn-primary" onClick={handleConnect}>
-          Connect
-        </button>
-      )}
+    <div className="flex flex-row w-full">
+      {!connected && <ConnectForm className="flex-1" onSubmit={onConnect} />}
       {!!connected && (
-        <div className="flex flex-row gap-x-10">
+        <div className="flex flex-row flex-1 gap-x-10">
           <button
             disabled={!isVideoEnabled}
             className="btn btn-primary"
@@ -55,6 +43,14 @@ export const LivekitControls = ({ isVideoEnabled = true }: Props) => {
           </button>
         </div>
       )}
-    </>
+      <a
+        className="self-end"
+        target={'_blank'}
+        href={`/#/compositor?room=${roomName}&identity=compositor-${v4()}&name=compositor-${v4()}`}
+        rel="noreferrer"
+      >
+        <button className="btn">Compositor</button>
+      </a>
+    </div>
   );
 };

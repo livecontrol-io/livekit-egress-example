@@ -1,8 +1,27 @@
+import { useFormik } from 'formik';
 import { useMemo } from 'react';
 import type { Props } from './types';
 
-export const PluginSection = ({ plugin, onDrawContainer }: Props) => {
+export const PluginSection = ({
+  plugin,
+  onDrawContainer,
+  onApplySettings,
+}: Props) => {
   const settings = useMemo(() => Object.entries(plugin.settings), [plugin]);
+  const { handleChange, handleSubmit, values } = useFormik<
+    Record<string, string>
+  >({
+    onSubmit: (data) => {
+      onApplySettings?.({
+        plugin: plugin.id,
+        settings: data,
+      });
+    },
+    initialValues: settings.reduce(
+      (acc, next) => ({ ...acc, [next[0]]: next[1].defaultValue }),
+      {}
+    ),
+  });
 
   return (
     <div className="overflow-y-scroll p-5 w-2/6 bg-slate-900 rounded-lg">
@@ -13,15 +32,17 @@ export const PluginSection = ({ plugin, onDrawContainer }: Props) => {
         <>
           <div className="divider" />
           <div>
-            <form>
+            <form onSubmit={handleSubmit}>
               {Object.entries(plugin.settings).map(([name, setting]) => (
                 <div className="w-full form-control" key={name}>
-                  <label className="label">
+                  <label htmlFor={name} className="label">
                     <span className="label-text">{name}</span>
                   </label>
                   <input
+                    onChange={handleChange}
                     className="w-full input"
-                    value={setting.defaultValue}
+                    // @ts-ignore
+                    value={values[name]}
                     type={setting.type}
                   />
                 </div>

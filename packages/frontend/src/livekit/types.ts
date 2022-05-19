@@ -8,5 +8,5 @@ export interface Settings {
 export interface UserSettings {
   identity: string;
   name: string;
-  room?: Maybe<string>;
+  room: Maybe<string>;
 }

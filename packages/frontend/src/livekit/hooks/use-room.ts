@@ -1,4 +1,8 @@
-import type { Participant, RemoteTrack } from 'livekit-client';
+import type {
+  Participant,
+  RemoteTrack,
+  TrackPublication,
+} from 'livekit-client';
 import { RoomEvent, RoomState } from 'livekit-client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLivekit } from './use-livekit';
@@ -6,13 +10,23 @@ import { useLivekit } from './use-livekit';
 export const useRoom = () => {
   const { room } = useLivekit();
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [videoTracks, setVideoTracks] = useState<TrackPublication[]>([]);
 
   const [connected, setConnected] = useState<boolean>(false);
 
   const handleParticipantsChange = useCallback(() => {
     if (!room) return;
 
-    setParticipants([room.localParticipant, ...room.participants.values()]);
+    const participantsList = [
+      room.localParticipant,
+      ...room.participants.values(),
+    ];
+
+    setParticipants(participantsList);
+    setVideoTracks(
+      // @ts-ignore
+      participantsList.flatMap((p) => Array.from(p.videoTracks.values()))
+    );
   }, [room]);
 
   const handleStateChange = useCallback((state: RoomState) => {
@@ -66,7 +80,8 @@ export const useRoom = () => {
       room,
       participants,
       connected,
+      videoTracks,
     }),
-    [room, connected, participants]
+    [room, connected, participants, videoTracks]
   );
 };
