@@ -48,6 +48,7 @@ export const createKonvaVideoImage = (track: TrackPublication) => {
 
   void video.play();
 
+  document.body.lastElementChild?.remove();
   document.body.append(wrapper);
 
   console.log('Dimensions', track.dimensions);

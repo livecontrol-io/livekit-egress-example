@@ -1,6 +1,7 @@
 import cn from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Layer, Stage } from 'react-konva';
+import type { PluginLayer } from '~/livekit-plugins';
 import type { Props } from './types';
 
 export const Canvas = ({
@@ -9,6 +10,7 @@ export const Canvas = ({
   elements = [],
   ...props
 }: Props) => {
+  const prevElements = useRef<PluginLayer[]>([]);
   const [wrapper, setWrapper] = useState<HTMLDivElement>();
   const [layer, setLayer] =
     useState<ReturnType<typeof Layer['getNativeNode']>>();
@@ -24,13 +26,17 @@ export const Canvas = ({
   useEffect(() => {
     if (!layer) return;
 
-    layer.clear();
+    prevElements.current.forEach((el) => el.element.remove());
+
+    layer.draw();
 
     console.log('Updating layer...');
 
     elements.forEach((element) => {
       layer.add(element.element);
     });
+
+    prevElements.current = elements;
   }, [layer, elements]);
 
   console.log(elements);

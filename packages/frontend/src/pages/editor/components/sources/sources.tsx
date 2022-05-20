@@ -12,7 +12,7 @@ export const Sources = ({
   const { videoTracks } = useRoom();
 
   return (
-    <div className={cn('flex flex-col', className)}>
+    <div className={cn('flex flex-col gap-y-10', className)}>
       {videoTracks.map((t) => (
         <div
           key={t.trackSid}

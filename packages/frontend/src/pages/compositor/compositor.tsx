@@ -26,9 +26,8 @@ export const Compositor = () => {
   const { sourceId } = state;
 
   const handleUpdateElements = useCallback(async (track: TrackPublication) => {
-    console.log('Updating elements');
     const element = await createKonvaVideoImage(track);
-    console.log(element);
+
     setElements([
       {
         plugin: 'video',
