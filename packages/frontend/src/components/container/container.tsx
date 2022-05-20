@@ -4,7 +4,7 @@ import cn from 'classnames';
 export const Container = ({ children, className, ...props }: Props) => {
   return (
     <div
-      className={cn('p-5 bg-black rounded-lg opacity-30 bordered', className)}
+      className={cn('p-5 bg-base-300 rounded-lg bordered', className)}
       {...props}
     >
       {children}

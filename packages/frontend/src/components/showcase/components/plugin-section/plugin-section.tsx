@@ -24,7 +24,7 @@ export const PluginSection = ({
   });
 
   return (
-    <div className="overflow-y-scroll p-5 w-2/6 bg-slate-900 rounded-lg">
+    <div className="overflow-y-scroll p-5 w-2/6 rounded-lg bg-grey-200">
       <div>
         <h2>{plugin.title}</h2>
       </div>
