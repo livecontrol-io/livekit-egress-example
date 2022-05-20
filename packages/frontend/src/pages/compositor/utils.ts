@@ -26,7 +26,6 @@ export const createKonvaVideoImage = (track: TrackPublication) => {
 
   const image = new Konva.Image({
     image: video,
-    draggable: true,
     x: 0,
     y: 0,
   });

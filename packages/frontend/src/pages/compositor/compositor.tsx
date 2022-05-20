@@ -18,8 +18,6 @@ export const Compositor = () => {
   const identity = query.get('identity') ?? undefined;
   const name = query.get('name') ?? undefined;
 
-  console.log(elements);
-
   const connect = useLivekitConnect();
 
   const { state } = useProductionState(room);
