@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import { useEffect, useState } from 'react';
-import { Group, Layer, Stage } from 'react-konva';
+import { Layer, Stage } from 'react-konva';
 import type { Props } from './types';
 
 export const Canvas = ({
@@ -24,10 +24,16 @@ export const Canvas = ({
   useEffect(() => {
     if (!layer) return;
 
+    layer.clear();
+
+    console.log('Updating layer...');
+
     elements.forEach((element) => {
       layer.add(element.element);
     });
   }, [layer, elements]);
+
+  console.log(elements);
 
   return (
     <div
@@ -41,11 +47,7 @@ export const Canvas = ({
             setLayer(layer?.getLayer() ?? undefined);
             setCanvas(layer?.getContext().canvas._canvas);
           }}
-        >
-          {elements?.map((element) => (
-            <Group key={element.plugin} />
-          ))}
-        </Layer>
+        />
       </Stage>
     </div>
   );

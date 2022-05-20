@@ -1,31 +1,35 @@
-import Router from '@koa/router';
-import type { ParameterizedContext } from 'koa';
-import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import express from 'express';
+import http from 'http';
 import { AccessToken } from 'livekit-server-sdk';
 import { Server } from 'socket.io';
+import { join, state } from './room';
 
-const { API_KEY, API_SECRET, PORT, SOCKET_PORT } = process.env;
+const { API_KEY, API_SECRET, PORT } = process.env;
 
-const io = new Server(Number(SOCKET_PORT ?? 8082));
-
-const app = new Koa();
-const router: Router = new Router();
-
-app.use(bodyParser()).use(router.routes());
-
-app.use((ctx: ParameterizedContext) => {
-  ctx.body = 'Hello World';
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
 });
 
-router.post<{
+app.use(bodyParser.json()).use(cors());
+
+app.get('/', (_, res) => {
+  res.send('Hello');
+});
+
+app.post<{
   room: string;
   identity: string;
   name: string;
-}>('/token', (ctx: ParameterizedContext) => {
+}>('/token', (req, res) => {
   const { room, identity, name } = <
     { room: string; identity: string; name: string }
-  >ctx.request.body;
+  >req.body;
 
   const at = new AccessToken(API_KEY, API_SECRET, {
     identity,
@@ -43,13 +47,13 @@ router.post<{
 
   console.log('Token', token);
 
-  ctx.body = {
+  if (!state[`/${room}`]) {
+    join(io.of(room));
+  }
+
+  res.send({
     token,
-  };
+  });
 });
 
-io.on('connection', () => {
-  console.log('Welcome');
-});
-
-app.listen(PORT || 8081);
+server.listen(PORT || 8080);

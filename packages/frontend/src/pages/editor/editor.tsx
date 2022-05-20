@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Canvas, Container, LivekitControls, Showcase } from '~/components';
 import { roomName } from '~/constants';
-import { useLivekitConnect } from '~/hooks';
+import { useLivekitConnect, useProductionState } from '~/hooks';
 import type { UserSettings } from '~/livekit';
 import type { PluginLayer } from '~/livekit-plugins';
 import { pluginsList } from '~/livekit-plugins';
@@ -11,6 +11,7 @@ export const Editor = () => {
   const [, setStream] = useState<MediaStream>();
   const [elements, setElements] = useState<PluginLayer[]>([]);
   const connect = useLivekitConnect();
+  const { setSource } = useProductionState(roomName);
 
   const handleAddLayer = useCallback((layer: PluginLayer) => {
     setElements([layer]);
@@ -23,9 +24,12 @@ export const Editor = () => {
     [connect]
   );
 
-  const handleSelectSource = useCallback((id: string) => {
-    console.log('Selected track', id);
-  }, []);
+  const handleSelectSource = useCallback(
+    (id: string) => {
+      setSource(id);
+    },
+    [setSource]
+  );
 
   return (
     <div className="flex flex-col gap-10 p-10 App">

@@ -26,8 +26,8 @@ services:
     volumes:
       - ./packages/frontend/src:/app/src
     environment:
-      - LC_BACKEND_PATH=http://backend:8082
-      - LC_BACKEND_SOCKET_PATH=http://backend:8083
+      - LC_BACKEND_PATH=http://backend:8080
+      - LC_SOCKET_PATH=http://localhost:8080
       - LC_CONTAINER=true
   backend:
     build:
@@ -35,12 +35,10 @@ services:
     depends_on:
       - livekit
     ports:
-      - "8082:8082"
-      - "8083:8083"
+      - "8080:8080"
     volumes:
       - ./packages/backend/src:/app/src
     env_file:
       - .env
     environment:
-      - PORT=8082
-      - SOCKET_PORT=8083
+      - PORT=8080
